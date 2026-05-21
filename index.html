@@ -1,525 +1,76 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>CarePatrol CRM</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@2.47.0/tabler-icons.min.css">
-  <style>
-    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-    :root {
-      --cp-purple: #7B5EA7;
-      --cp-purple-light: #ede8f8;
-      --cp-teal: #3AADA8;
-      --cp-teal-light: #e1f5ee;
-      --cp-blue: #5BACD4;
-      --bg: #f5f6fa;
-      --surface: #ffffff;
-      --surface2: #f0f2f8;
-      --border: #e2e5ef;
-      --text: #1a1d2e;
-      --text2: #6b7080;
-      --text3: #9fa3b0;
-      --radius: 10px;
-      --radius-lg: 14px;
-    }
-    body { font-family: 'DM Sans', sans-serif; background: var(--bg); color: var(--text); font-size: 14px; min-height: 100vh; }
-    .crm-wrap { display: flex; height: 100vh; overflow: hidden; }
+CAREPatrol
+Senior Care Solutions
 
-    /* Sidebar */
-    .sidebar { width: 220px; background: var(--surface); border-right: 1px solid var(--border); display: flex; flex-direction: column; flex-shrink: 0; }
-    .sidebar-logo { padding: 20px 18px 16px; border-bottom: 1px solid var(--border); }
-    .logo-brand { font-size: 18px; font-weight: 600; color: var(--cp-purple); letter-spacing: -0.3px; }
-    .logo-brand span { color: var(--cp-teal); font-style: italic; }
-    .logo-sub { font-size: 10px; color: var(--text3); margin-top: 2px; }
-    .nav { padding: 10px 0; flex: 1; }
-    .nav-item { display: flex; align-items: center; gap: 10px; padding: 10px 18px; font-size: 13px; color: var(--text2); cursor: pointer; border-left: 3px solid transparent; transition: all 0.15s; user-select: none; }
-    .nav-item:hover { background: var(--surface2); color: var(--text); }
-    .nav-item.active { color: var(--cp-purple); border-left-color: var(--cp-purple); background: var(--cp-purple-light); font-weight: 500; }
-    .nav-item i { font-size: 17px; }
-    .sidebar-footer { padding: 14px 18px; border-top: 1px solid var(--border); display: flex; align-items: center; gap: 10px; }
-    .avatar { width: 30px; height: 30px; border-radius: 50%; background: var(--cp-purple-light); display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 600; color: var(--cp-purple); }
+Dashboard
 
-    /* Main */
-    .main { flex: 1; display: flex; flex-direction: column; overflow: hidden; background: var(--bg); }
-    .topbar { padding: 14px 24px; background: var(--surface); border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; }
-    .topbar h2 { font-size: 16px; font-weight: 600; color: var(--text); }
-    .content { flex: 1; overflow-y: auto; padding: 20px 24px; }
+Pipeline
 
-    /* Buttons */
-    .btn-primary { background: var(--cp-purple); color: #fff; border: none; border-radius: var(--radius); padding: 8px 16px; font-size: 13px; font-family: inherit; cursor: pointer; display: inline-flex; align-items: center; gap: 6px; font-weight: 500; transition: opacity 0.15s; }
-    .btn-primary:hover { opacity: 0.88; }
-    .btn-sm { background: transparent; border: 1px solid var(--border); border-radius: var(--radius); padding: 6px 12px; font-size: 12px; font-family: inherit; cursor: pointer; color: var(--text2); transition: background 0.15s; }
-    .btn-sm:hover { background: var(--surface2); }
+All Referrals
 
-    /* Stats */
-    .stats-row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-bottom: 20px; }
-    .stat-card { background: var(--surface); border-radius: var(--radius-lg); padding: 16px; border: 1px solid var(--border); }
-    .stat-label { font-size: 11px; color: var(--text3); margin-bottom: 6px; text-transform: uppercase; letter-spacing: 0.5px; }
-    .stat-val { font-size: 26px; font-weight: 600; color: var(--text); line-height: 1; }
-    .stat-val.purple { color: var(--cp-purple); }
-    .stat-val.teal { color: var(--cp-teal); }
+Upload
 
-    /* Pipeline */
-    .pipeline-row { display: flex; gap: 10px; overflow-x: auto; padding-bottom: 6px; }
-    .stage-col { min-width: 150px; flex: 1; }
-    .stage-head { font-size: 11px; font-weight: 600; padding: 8px 10px; border-radius: var(--radius) var(--radius) 0 0; display: flex; justify-content: space-between; align-items: center; text-transform: uppercase; letter-spacing: 0.4px; }
-    .stage-body { border: 1px solid var(--border); border-top: none; border-radius: 0 0 var(--radius) var(--radius); min-height: 120px; padding: 8px; background: var(--surface); }
-    .lead-card { background: var(--bg); border: 1px solid var(--border); border-radius: var(--radius); padding: 10px; margin-bottom: 8px; cursor: pointer; transition: border-color 0.15s, box-shadow 0.15s; }
-    .lead-card:hover { border-color: var(--cp-purple); box-shadow: 0 2px 8px rgba(123,94,167,0.12); }
-    .lead-name { font-size: 13px; font-weight: 500; color: var(--text); }
-    .lead-meta { font-size: 11px; color: var(--text3); margin-top: 3px; }
-    .lead-val { font-size: 12px; color: var(--cp-teal); font-weight: 500; margin-top: 4px; }
+Messages
 
-    /* Table */
-    .table-wrap { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-lg); overflow: hidden; }
-    table { width: 100%; border-collapse: collapse; font-size: 13px; table-layout: fixed; }
-    thead { background: var(--surface2); }
-    th { padding: 11px 14px; text-align: left; font-weight: 500; font-size: 11px; color: var(--text3); border-bottom: 1px solid var(--border); text-transform: uppercase; letter-spacing: 0.4px; }
-    td { padding: 11px 14px; border-bottom: 1px solid var(--border); color: var(--text); }
-    tr:last-child td { border-bottom: none; }
-    tr:hover td { background: var(--surface2); }
-    .status-pill { font-size: 11px; padding: 3px 9px; border-radius: 20px; font-weight: 500; display: inline-block; }
+Zapier
+CP
+Admin
+Dashboard
 
-    /* Search */
-    .search-input { border: 1px solid var(--border); border-radius: var(--radius); padding: 7px 12px; font-size: 13px; font-family: inherit; background: var(--surface); color: var(--text); outline: none; width: 200px; }
-    .search-input:focus { border-color: var(--cp-purple); }
+TOTAL DELIVERED REFERRALS
+0
 
-    /* Upload */
-    .upload-zone { border: 2px dashed var(--border); border-radius: var(--radius-lg); padding: 40px; text-align: center; cursor: pointer; transition: background 0.15s, border-color 0.15s; margin-bottom: 20px; background: var(--surface); }
-    .upload-zone:hover { background: var(--cp-purple-light); border-color: var(--cp-purple); }
-    .upload-zone i { font-size: 40px; color: var(--cp-purple); margin-bottom: 12px; display: block; }
+CALL RESPONSE RATE
+N/A
+Contacted ÷ total
+MEDIAN TIME TO RESPOND
+N/A
+Avg days to contact
+CALL TO APPOINTMENT RATE
+0
+Visit scheduled ÷ contacted
+Referral pipeline
 
-    /* Messages */
-    .msg-threads { width: 200px; border-right: 1px solid var(--border); overflow-y: auto; background: var(--surface); }
-    .thread-item { padding: 12px 14px; cursor: pointer; border-bottom: 1px solid var(--border); transition: background 0.1s; }
-    .thread-item:hover, .thread-item.active { background: var(--surface2); }
-    .thread-name { font-size: 13px; font-weight: 500; color: var(--text); }
-    .thread-preview { font-size: 11px; color: var(--text3); margin-top: 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 160px; }
-    .msg-list { flex: 1; overflow-y: auto; padding: 16px; display: flex; flex-direction: column; gap: 10px; background: var(--bg); }
-    .msg-bubble { max-width: 70%; padding: 10px 14px; border-radius: 14px; font-size: 13px; line-height: 1.5; }
-    .msg-bubble.out { align-self: flex-end; background: var(--cp-purple); color: #fff; border-bottom-right-radius: 3px; }
-    .msg-bubble.in { align-self: flex-start; background: var(--surface); color: var(--text); border: 1px solid var(--border); border-bottom-left-radius: 3px; }
-    .msg-meta { font-size: 10px; opacity: 0.65; margin-top: 4px; }
-    .msg-input-row { padding: 12px 16px; border-top: 1px solid var(--border); display: flex; gap: 8px; background: var(--surface); }
-    .msg-input { flex: 1; border: 1px solid var(--border); border-radius: 20px; padding: 9px 16px; font-size: 13px; font-family: inherit; background: var(--bg); color: var(--text); outline: none; }
-    .msg-input:focus { border-color: var(--cp-purple); }
+Recent referrals
 
-    /* Modal */
-    .modal-bg { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.35); z-index: 100; align-items: center; justify-content: center; }
-    .modal-bg.open { display: flex; }
-    .modal { background: var(--surface); border-radius: var(--radius-lg); padding: 24px; width: 360px; border: 1px solid var(--border); box-shadow: 0 8px 32px rgba(0,0,0,0.12); }
-    .modal h3 { font-size: 16px; font-weight: 600; margin-bottom: 16px; }
-    .form-row { margin-bottom: 12px; }
-    .form-row label { font-size: 12px; color: var(--text2); display: block; margin-bottom: 5px; font-weight: 500; }
-    .form-row input, .form-row select, .form-row textarea { width: 100%; border: 1px solid var(--border); border-radius: var(--radius); padding: 8px 11px; font-size: 13px; font-family: inherit; background: var(--surface); color: var(--text); outline: none; transition: border-color 0.15s; }
-    .form-row input:focus, .form-row select:focus, .form-row textarea:focus { border-color: var(--cp-purple); }
-    .modal-btns { display: flex; gap: 8px; justify-content: flex-end; margin-top: 18px; }
+Stage breakdown
 
-    /* Lead detail panel */
-    .detail-panel { position: fixed; right: 0; top: 0; bottom: 0; width: 360px; background: var(--surface); border-left: 1px solid var(--border); z-index: 90; transform: translateX(100%); transition: transform 0.22s ease; display: flex; flex-direction: column; box-shadow: -4px 0 24px rgba(0,0,0,0.08); }
-    .detail-panel.open { transform: translateX(0); }
-    .panel-header { padding: 18px 20px; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; }
-    .panel-body { flex: 1; overflow-y: auto; padding: 20px; }
-    .panel-field { margin-bottom: 14px; }
-    .panel-field label { font-size: 11px; color: var(--text3); text-transform: uppercase; letter-spacing: 0.4px; display: block; margin-bottom: 4px; }
-    .panel-field .val { font-size: 14px; color: var(--text); font-weight: 500; }
-    .notes-area { width: 100%; border: 1px solid var(--border); border-radius: var(--radius); padding: 9px 11px; font-size: 13px; font-family: inherit; background: var(--bg); color: var(--text); resize: vertical; min-height: 80px; outline: none; }
-    .notes-area:focus { border-color: var(--cp-purple); }
 
-    .empty-state { text-align: center; padding: 40px 20px; color: var(--text3); font-size: 13px; }
-    .empty-state i { font-size: 36px; display: block; margin-bottom: 10px; opacity: 0.4; }
 
-    @media (max-width: 700px) {
-      .sidebar { width: 60px; }
-      .logo-brand, .logo-sub, .nav-item span, .sidebar-footer span { display: none; }
-      .nav-item { justify-content: center; padding: 12px; }
-      .stats-row { grid-template-columns: repeat(2,1fr); }
-    }
-  </style>
-</head>
-<body>
-<div class="crm-wrap">
-  <div class="sidebar">
-    <div class="sidebar-logo">
-      <div class="logo-brand">CARE<span>Patrol</span></div>
-      <div class="logo-sub">Senior Care Solutions</div>
-    </div>
-    <nav class="nav">
-      <div class="nav-item active" onclick="showTab('pipeline')"><i class="ti ti-layout-kanban"></i> <span>Pipeline</span></div>
-      <div class="nav-item" onclick="showTab('leads')"><i class="ti ti-users"></i> <span>All Leads</span></div>
-      <div class="nav-item" onclick="showTab('upload')"><i class="ti ti-upload"></i> <span>Upload Leads</span></div>
-      <div class="nav-item" onclick="showTab('messages')"><i class="ti ti-message-circle"></i> <span>Messages</span></div>
-    </nav>
-    <div class="sidebar-footer">
-      <div class="avatar">CP</div>
-      <span style="font-size:12px;color:var(--text2)">Admin</span>
-    </div>
-  </div>
+STAGE
+CONTACT
+PHONE
 
-  <div class="main">
-    <!-- Pipeline Tab -->
-    <div id="tab-pipeline">
-      <div class="topbar">
-        <h2>Sales pipeline</h2>
-        <button class="btn-primary" onclick="openAddLead()"><i class="ti ti-plus"></i> Add lead</button>
-      </div>
-      <div class="content">
-        <div class="stats-row">
-          <div class="stat-card"><div class="stat-label">Total leads</div><div class="stat-val purple" id="stat-total">0</div></div>
-          <div class="stat-card"><div class="stat-label">Pipeline value</div><div class="stat-val teal" id="stat-value">$0</div></div>
-          <div class="stat-card"><div class="stat-label">Closed won</div><div class="stat-val" id="stat-won">0</div></div>
-          <div class="stat-card"><div class="stat-label">Win rate</div><div class="stat-val" id="stat-rate">0%</div></div>
-        </div>
-        <div class="pipeline-row" id="pipeline-board"></div>
-      </div>
-    </div>
+EMAIL
 
-    <!-- Leads Tab -->
-    <div id="tab-leads" style="display:none;flex-direction:column;flex:1;overflow:hidden;">
-      <div class="topbar">
-        <h2>All leads</h2>
-        <div style="display:flex;gap:8px;align-items:center;">
-          <input class="search-input" type="text" placeholder="Search leads..." id="search-input" oninput="renderTable()">
-          <button class="btn-primary" onclick="openAddLead()"><i class="ti ti-plus"></i> Add lead</button>
-        </div>
-      </div>
-      <div class="content">
-        <div class="table-wrap">
-          <table>
-            <thead>
-              <tr>
-                <th style="width:22%">Name</th>
-                <th style="width:20%">Company</th>
-                <th style="width:14%">Phone</th>
-                <th style="width:17%">Stage</th>
-                <th style="width:12%">Value</th>
-                <th style="width:15%">Source</th>
-              </tr>
-            </thead>
-            <tbody id="leads-table"></tbody>
-          </table>
-        </div>
-      </div>
-    </div>
+REFERRAL DATE
 
-    <!-- Upload Tab -->
-    <div id="tab-upload" style="display:none;flex-direction:column;flex:1;overflow:hidden;">
-      <div class="topbar"><h2>Upload leads</h2></div>
-      <div class="content">
-        <div class="upload-zone" id="drop-zone" onclick="document.getElementById('csv-file').click()">
-          <i class="ti ti-file-spreadsheet"></i>
-          <div style="font-size:15px;font-weight:600;color:var(--text);margin-bottom:8px;">Drop a CSV file here, or click to browse</div>
-          <div style="font-size:13px;color:var(--text3);">Columns: name, company, phone, email, value, source, stage</div>
-          <input type="file" id="csv-file" accept=".csv" style="display:none" onchange="handleCSV(this)">
-        </div>
-        <div id="upload-preview" style="display:none;">
-          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;">
-            <div style="font-size:14px;font-weight:500;" id="upload-summary"></div>
-            <div style="display:flex;gap:8px;">
-              <button class="btn-sm" onclick="cancelUpload()">Cancel</button>
-              <button class="btn-primary" onclick="confirmUpload()"><i class="ti ti-check"></i> Import leads</button>
-            </div>
-          </div>
-          <div class="table-wrap">
-            <table>
-              <thead><tr><th>Name</th><th>Company</th><th>Phone</th><th>Value</th><th>Stage</th></tr></thead>
-              <tbody id="preview-table"></tbody>
-            </table>
-          </div>
-        </div>
-        <div style="margin-top:24px;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);padding:16px;">
-          <div style="font-size:13px;font-weight:500;margin-bottom:10px;">Sample CSV format</div>
-          <pre style="font-size:12px;color:var(--text2);font-family:monospace;line-height:1.9;background:var(--surface2);padding:12px;border-radius:var(--radius);overflow-x:auto;">name,company,phone,email,value,source,stage
-Mary Johnson,Sunrise Home Care,555-0101,mary@example.com,4500,Referral,New Lead
-John Smith,Golden Years Inc,555-0202,john@example.com,6000,Website,Contacted</pre>
-        </div>
-      </div>
-    </div>
+REF STATUS
 
-    <!-- Messages Tab -->
-    <div id="tab-messages" style="display:none;flex:1;overflow:hidden;">
-      <div class="topbar"><h2>Messages</h2></div>
-      <div style="display:flex;flex:1;overflow:hidden;height:calc(100vh - 113px);">
-        <div class="msg-threads" id="thread-list"></div>
-        <div style="flex:1;display:flex;flex-direction:column;overflow:hidden;">
-          <div style="padding:12px 16px;border-bottom:1px solid var(--border);font-size:13px;font-weight:500;color:var(--text);background:var(--surface);" id="chat-header">Select a conversation</div>
-          <div class="msg-list" id="msg-list"></div>
-          <div class="msg-input-row">
-            <input class="msg-input" type="text" placeholder="Type a message..." id="msg-input" onkeydown="sendMsg(event)">
-            <button class="btn-primary" onclick="sendMsg({key:'Enter'})"><i class="ti ti-send"></i></button>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-</div>
+INQUIRING FOR
+NAME
 
-<!-- Add Lead Modal -->
-<div class="modal-bg" id="add-modal">
-  <div class="modal">
-    <h3>Add new lead</h3>
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
-      <div class="form-row"><label>Full name *</label><input id="f-name" placeholder="Jane Smith"></div>
-      <div class="form-row"><label>Company</label><input id="f-company" placeholder="Sunrise Care"></div>
-      <div class="form-row"><label>Phone</label><input id="f-phone" placeholder="555-0100"></div>
-      <div class="form-row"><label>Email</label><input id="f-email" placeholder="jane@example.com"></div>
-      <div class="form-row"><label>Deal value ($)</label><input id="f-value" type="number" placeholder="5000"></div>
-      <div class="form-row"><label>Source</label><select id="f-source"><option>Referral</option><option>Website</option><option>Cold outreach</option><option>Event</option><option>Email</option><option>Other</option></select></div>
-    </div>
-    <div class="form-row"><label>Stage</label><select id="f-stage"><option>New Lead</option><option>Contacted</option><option>Qualified</option><option>Proposal Sent</option><option>Closed Won</option><option>Closed Lost</option></select></div>
-    <div class="form-row"><label>Notes</label><textarea id="f-notes" rows="2" placeholder="Any additional notes..."></textarea></div>
-    <div class="modal-btns">
-      <button class="btn-sm" onclick="closeModal()">Cancel</button>
-      <button class="btn-primary" onclick="saveLead()"><i class="ti ti-check"></i> Save lead</button>
-    </div>
-  </div>
-</div>
+RELATIONSHIP
 
-<!-- Lead Detail Panel -->
-<div class="detail-panel" id="detail-panel">
-  <div class="panel-header">
-    <div>
-      <div style="font-size:15px;font-weight:600;" id="dp-name"></div>
-      <div style="font-size:12px;color:var(--text3);margin-top:2px;" id="dp-company"></div>
-    </div>
-    <div style="display:flex;gap:8px;align-items:center;">
-      <button class="btn-sm" id="dp-move" onclick="moveLeadStage()">Move stage</button>
-      <button class="btn-sm" onclick="closePanel()" style="padding:6px 8px;"><i class="ti ti-x" style="font-size:14px;"></i></button>
-    </div>
-  </div>
-  <div class="panel-body">
-    <div class="panel-field"><label>Stage</label><div class="val" id="dp-stage"></div></div>
-    <div class="panel-field"><label>Deal value</label><div class="val" id="dp-value"></div></div>
-    <div class="panel-field"><label>Phone</label><div class="val" id="dp-phone"></div></div>
-    <div class="panel-field"><label>Email</label><div class="val" id="dp-email"></div></div>
-    <div class="panel-field"><label>Source</label><div class="val" id="dp-source"></div></div>
-    <div class="panel-field">
-      <label>Notes</label>
-      <textarea class="notes-area" id="dp-notes" oninput="saveNotes()"></textarea>
-    </div>
-    <div style="display:flex;gap:8px;margin-top:8px;">
-      <button class="btn-primary" style="flex:1;" onclick="msgFromPanel()"><i class="ti ti-message-circle"></i> Message</button>
-      <button class="btn-sm" style="flex:1;color:#e24b4a;border-color:#f7c1c1;" onclick="deleteLead()"><i class="ti ti-trash"></i> Delete</button>
-    </div>
-  </div>
-</div>
+GENDER
 
-<script>
-const STAGES = ['New Lead','Contacted','Qualified','Proposal Sent','Closed Won','Closed Lost'];
-const STAGE_STYLES = {
-  'New Lead':      {bg:'#e6f1fb',head:'#b5d4f4',text:'#0C447C'},
-  'Contacted':     {bg:'#ede8f8',head:'#CECBF6',text:'#26215C'},
-  'Qualified':     {bg:'#e1f5ee',head:'#9FE1CB',text:'#04342C'},
-  'Proposal Sent': {bg:'#faeeda',head:'#FAC775',text:'#412402'},
-  'Closed Won':    {bg:'#eaf3de',head:'#C0DD97',text:'#173404'},
-  'Closed Lost':   {bg:'#fcebeb',head:'#F7C1C1',text:'#501313'},
-};
+AGE
 
-let leads = JSON.parse(localStorage.getItem('cp_leads') || 'null') || [
-  {id:1,name:'Dorothy Nguyen',company:'Sunrise Assisted Living',phone:'714-555-0101',email:'d.nguyen@example.com',value:4800,source:'Referral',stage:'New Lead',notes:'Interested in memory care options'},
-  {id:2,name:'Robert Castillo',company:'Golden Years Inc.',phone:'714-555-0202',email:'r.castillo@example.com',value:6200,source:'Website',stage:'Contacted',notes:'Follow up Thursday'},
-  {id:3,name:'Margaret Lee',company:'Family Care Partners',phone:'714-555-0303',email:'m.lee@example.com',value:5100,source:'Referral',stage:'Qualified',notes:'Ready for proposal'},
-  {id:4,name:'Harold Kim',company:'Harbor View Care',phone:'714-555-0404',email:'h.kim@example.com',value:7400,source:'Event',stage:'Proposal Sent',notes:'Decision by end of month'},
-  {id:5,name:'Susan Patel',company:'Coastal Senior Care',phone:'714-555-0505',email:'s.patel@example.com',value:5500,source:'Cold outreach',stage:'Closed Won',notes:'Signed!'},
-];
-let nextId = Math.max(...leads.map(l=>l.id), 0) + 1;
-let pendingImport = [];
-let activeThread = null;
-let activeLead = null;
-let conversations = JSON.parse(localStorage.getItem('cp_convos') || '{}');
+CARE DETAILS
+CARE ZIP
 
-if (!conversations['Dorothy Nguyen']) {
-  conversations['Dorothy Nguyen'] = [{dir:'in',text:'Hi, I saw your listing for memory care options.',time:'9:02 AM'},{dir:'out',text:'Hello Dorothy! Happy to help. Can you tell me more about your needs?',time:'9:04 AM'}];
-  conversations['Robert Castillo'] = [{dir:'in',text:'Following up — do you have pricing info?',time:'Yesterday'},{dir:'out',text:'Absolutely, sending that over today.',time:'Yesterday'}];
-}
+HOME SITUATION
 
-function save() {
-  localStorage.setItem('cp_leads', JSON.stringify(leads));
-  localStorage.setItem('cp_convos', JSON.stringify(conversations));
-}
+HEALTH CONCERNS
 
-function stageStyle(stage) { return STAGE_STYLES[stage] || {bg:'#f0f0f0',head:'#ddd',text:'#333'}; }
+SERVICES NEEDED
 
-function renderPipeline() {
-  const board = document.getElementById('pipeline-board');
-  board.innerHTML = '';
-  STAGES.forEach(stage => {
-    const sl = leads.filter(l => l.stage === stage);
-    const ss = stageStyle(stage);
-    const col = document.createElement('div');
-    col.className = 'stage-col';
-    col.style.background = ss.bg;
-    col.style.borderRadius = '10px';
-    col.innerHTML = `<div class="stage-head" style="background:${ss.head};color:${ss.text}">${stage}<span style="background:rgba(0,0,0,0.1);border-radius:10px;padding:1px 7px;font-size:11px;">${sl.length}</span></div><div class="stage-body" style="background:${ss.bg};border-color:${ss.head};">${sl.map(l=>`<div class="lead-card" onclick="openPanel(${l.id})"><div class="lead-name">${l.name}</div><div class="lead-meta">${l.company}</div>${l.value?`<div class="lead-val">$${l.value.toLocaleString()}</div>`:''}</div>`).join('')}</div>`;
-    board.appendChild(col);
-  });
-  updateStats();
-}
+WHY CARE IS NEEDED
 
-function renderTable() {
-  const q = (document.getElementById('search-input')||{}).value||'';
-  const filtered = leads.filter(l => !q || l.name.toLowerCase().includes(q.toLowerCase()) || l.company.toLowerCase().includes(q.toLowerCase()));
-  const tb = document.getElementById('leads-table');
-  if (!tb) return;
-  if (!filtered.length) { tb.innerHTML = '<tr><td colspan="6" class="empty-state"><i class="ti ti-users"></i>No leads found</td></tr>'; return; }
-  tb.innerHTML = filtered.map(l => {
-    const ss = stageStyle(l.stage);
-    return `<tr onclick="openPanel(${l.id})" style="cursor:pointer"><td style="font-weight:500">${l.name}</td><td style="color:var(--text2)">${l.company}</td><td style="color:var(--text2)">${l.phone}</td><td><span class="status-pill" style="background:${ss.head};color:${ss.text}">${l.stage}</span></td><td>$${l.value.toLocaleString()}</td><td style="color:var(--text2)">${l.source}</td></tr>`;
-  }).join('');
-}
+AGENCY TRANSFER
 
-function updateStats() {
-  const total = leads.length;
-  const value = leads.filter(l=>l.stage!=='Closed Lost').reduce((s,l)=>s+(l.value||0),0);
-  const won = leads.filter(l=>l.stage==='Closed Won').length;
-  const closed = leads.filter(l=>l.stage==='Closed Won'||l.stage==='Closed Lost').length;
-  document.getElementById('stat-total').textContent = total;
-  document.getElementById('stat-value').textContent = '$' + value.toLocaleString();
-  document.getElementById('stat-won').textContent = won;
-  document.getElementById('stat-rate').textContent = closed ? Math.round(won/closed*100)+'%' : '0%';
-}
+NOTES
 
-function showTab(t) {
-  ['pipeline','leads','upload','messages'].forEach((tab,i) => {
-    document.getElementById('tab-'+tab).style.display = 'none';
-    document.querySelectorAll('.nav-item')[i].classList.toggle('active', tab===t);
-  });
-  const el = document.getElementById('tab-'+t);
-  el.style.display = t==='pipeline' ? 'block' : 'flex';
-  if (t==='pipeline') renderPipeline();
-  if (t==='leads') renderTable();
-  if (t==='messages') renderThreads();
-  closePanel();
-}
+Message
 
-function openAddLead() { document.getElementById('add-modal').classList.add('open'); }
-function closeModal() { document.getElementById('add-modal').classList.remove('open'); ['f-name','f-company','f-phone','f-email','f-value','f-notes'].forEach(id=>{const el=document.getElementById(id);if(el)el.value='';}); }
+Edit
 
-function saveLead() {
-  const name = document.getElementById('f-name').value.trim();
-  if (!name) { document.getElementById('f-name').style.borderColor='#e24b4a'; return; }
-  const lead = {id:nextId++, name, company:document.getElementById('f-company').value, phone:document.getElementById('f-phone').value, email:document.getElementById('f-email').value, value:parseFloat(document.getElementById('f-value').value)||0, source:document.getElementById('f-source').value, stage:document.getElementById('f-stage').value, notes:document.getElementById('f-notes').value};
-  leads.push(lead);
-  save();
-  closeModal();
-  renderPipeline();
-  renderTable();
-}
-
-function openPanel(id) {
-  const l = leads.find(x=>x.id===id);
-  if (!l) return;
-  activeLead = id;
-  const ss = stageStyle(l.stage);
-  document.getElementById('dp-name').textContent = l.name;
-  document.getElementById('dp-company').textContent = l.company;
-  document.getElementById('dp-stage').innerHTML = `<span class="status-pill" style="background:${ss.head};color:${ss.text}">${l.stage}</span>`;
-  document.getElementById('dp-value').textContent = '$' + (l.value||0).toLocaleString();
-  document.getElementById('dp-phone').textContent = l.phone || '—';
-  document.getElementById('dp-email').textContent = l.email || '—';
-  document.getElementById('dp-source').textContent = l.source || '—';
-  document.getElementById('dp-notes').value = l.notes || '';
-  document.getElementById('detail-panel').classList.add('open');
-}
-
-function closePanel() { document.getElementById('detail-panel').classList.remove('open'); activeLead = null; }
-
-function saveNotes() {
-  const l = leads.find(x=>x.id===activeLead);
-  if (l) { l.notes = document.getElementById('dp-notes').value; save(); }
-}
-
-function moveLeadStage() {
-  const l = leads.find(x=>x.id===activeLead);
-  if (!l) return;
-  const idx = STAGES.indexOf(l.stage);
-  if (idx < STAGES.length-1) { l.stage = STAGES[idx+1]; save(); openPanel(l.id); renderPipeline(); renderTable(); }
-}
-
-function deleteLead() {
-  if (!confirm('Delete this lead?')) return;
-  leads = leads.filter(x=>x.id!==activeLead);
-  save(); closePanel(); renderPipeline(); renderTable();
-}
-
-function msgFromPanel() {
-  const l = leads.find(x=>x.id===activeLead);
-  if (!l) return;
-  if (!conversations[l.name]) conversations[l.name] = [];
-  activeThread = l.name;
-  showTab('messages');
-}
-
-function handleCSV(input) {
-  const file = input.files[0];
-  if (!file) return;
-  const reader = new FileReader();
-  reader.onload = e => {
-    const lines = e.target.result.trim().split('\n');
-    const headers = lines[0].toLowerCase().split(',').map(h=>h.trim());
-    pendingImport = lines.slice(1).map(row => {
-      const cols = row.split(',');
-      const obj = {};
-      headers.forEach((h,i) => obj[h] = (cols[i]||'').trim());
-      return {id:nextId++, name:obj.name||'', company:obj.company||'', phone:obj.phone||'', email:obj.email||'', value:parseFloat(obj.value)||0, source:obj.source||'Other', stage:STAGES.includes(obj.stage)?obj.stage:'New Lead', notes:''};
-    }).filter(l=>l.name);
-    document.getElementById('upload-summary').textContent = `${pendingImport.length} leads ready to import`;
-    document.getElementById('preview-table').innerHTML = pendingImport.slice(0,10).map(l=>`<tr><td>${l.name}</td><td>${l.company}</td><td>${l.phone}</td><td>$${l.value.toLocaleString()}</td><td>${l.stage}</td></tr>`).join('');
-    document.getElementById('upload-preview').style.display = 'block';
-    document.getElementById('drop-zone').style.display = 'none';
-  };
-  reader.readAsText(file);
-}
-
-function confirmUpload() { leads=[...leads,...pendingImport]; save(); cancelUpload(); showTab('pipeline'); }
-function cancelUpload() { pendingImport=[]; document.getElementById('upload-preview').style.display='none'; document.getElementById('drop-zone').style.display='block'; document.getElementById('csv-file').value=''; }
-
-function renderThreads() {
-  const tl = document.getElementById('thread-list');
-  const names = leads.map(l=>l.name).filter(n=>conversations[n]);
-  if (!names.length) { tl.innerHTML='<div class="empty-state"><i class="ti ti-message-circle"></i>No conversations yet</div>'; return; }
-  tl.innerHTML = names.map(n=>{
-    const msgs = conversations[n]||[];
-    const last = msgs[msgs.length-1];
-    return `<div class="thread-item${activeThread===n?' active':''}" onclick="openThread('${n}')"><div class="thread-name">${n}</div><div class="thread-preview">${last?last.text:''}</div></div>`;
-  }).join('');
-  if (activeThread) openThread(activeThread);
-}
-
-function openThread(name) {
-  activeThread = name;
-  document.getElementById('chat-header').textContent = name;
-  if (!conversations[name]) conversations[name] = [];
-  renderMessages();
-  renderThreads();
-}
-
-function renderMessages() {
-  if (!activeThread) return;
-  const msgs = conversations[activeThread]||[];
-  const ml = document.getElementById('msg-list');
-  ml.innerHTML = msgs.length ? msgs.map(m=>`<div><div class="msg-bubble ${m.dir==='out'?'out':'in'}">${m.text}<div class="msg-meta">${m.time}</div></div></div>`).join('') : '<div class="empty-state"><i class="ti ti-message-circle"></i>No messages yet</div>';
-  ml.scrollTop = ml.scrollHeight;
-}
-
-function sendMsg(e) {
-  if (e.key!=='Enter') return;
-  const input = document.getElementById('msg-input');
-  const text = input.value.trim();
-  if (!text || !activeThread) return;
-  if (!conversations[activeThread]) conversations[activeThread]=[];
-  conversations[activeThread].push({dir:'out',text,time:new Date().toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'})});
-  input.value='';
-  save();
-  renderMessages();
-  renderThreads();
-}
-
-document.addEventListener('keydown', e => { if (e.key==='Escape') { closeModal(); closePanel(); }});
-renderPipeline();
-</script>
-</body>
-</html>
